@@ -1,44 +1,41 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/php
 {
-  "name": "larapod",
-  "image": "php:8.1-fpm",
-  "extensions": [
-    "felixfbecker.php-debug",
-    "editorconfig.editorconfig",
-    "esbenp.prettier-vscode",
-    "dbaeumer.vscode-eslint"
-  ],
-  "settings": {
-    "php.validate.enable": true,
-    "php.suggest.basic": false,
-    "php.executablePath": "/usr/local/bin/php"
-  },
-  "mounts": [
-    "source=/<Route To Project>/larapod,target=/workspace,type=bind,consistency=delegated"
-  ],
-  "postCreateCommand": "apt-get update && apt-get install -y build-essential default-mysql-client libpng-dev libjpeg62-turbo-dev libfreetype6-dev libzip-dev locales zip jpegoptim optipng pngquant gifsicle git unzip && cd /workspace && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && apt-get install -y libpq-dev && docker-php-ext-install pdo_pgsql && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash && export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && \\. \"$NVM_DIR/nvm.sh\" && [ -s \"$NVM_DIR/bash_completion\" ] && \\. \"$NVM_DIR/bash_completion\" && nvm install lts/hydrogen && npm install -g pnpm && npm install -g @nestjs/cli",
-  "remoteEnv": {
-    "COMPOSER_ALLOW_SUPERUSER": "1"
-  },
-  "services": {
-    "db": {
-      "image": "mysql:latest",
-      "ports": ["3306:3306"],
-      "environment": {
-        "MYSQL_DATABASE": "laravel",
-        "MYSQL_USER": "laravel",
-        "MYSQL_PASSWORD": "password",
-        "MYSQL_ROOT_PASSWORD": "password"
-      },
-      "command": "mysqld --general-log=1 --general-log-file=/var/lib/mysql/general.log",
-      "volumes": ["mysql_data:/var/lib/mysql"]
+    "name": "PHP",
+    // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+    "image": "php:8.3-fpm",
+
+    // Features to add to the dev container. More info: https://containers.dev/features.
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/devcontainers/features/node:1": {}
     },
-    "redis": {
-      "image": "redis:latest",
-      "ports": ["6379:6379"],
-      "volumes": ["redis_data:/data"]
-    }
-  },
-  "forwardPorts": [80,3306, 6379],
-  "remoteExtensions": ["ms-vscode-remote.vscode-remote-extensionpack"],
-  "volumes": ["mysql_data:/var/lib/mysql", "redis_data:/data"]
+
+    // Configure tool-specific properties.
+    "customizations": {
+        // Configure properties specific to VS Code.
+        "vscode": {
+            "settings": {},
+            "extensions": [
+                "streetsidesoftware.code-spell-checker"
+            ]
+        }
+    },
+
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    "forwardPorts": [8000],
+
+    // Use 'portsAttributes' to set default properties for specific forwarded ports. More info: https://code.visualstudio.com/docs/remote/devcontainerjson-reference.
+    "portsAttributes": {
+        "8000": {
+            "label": "Hello Remote World",
+            "onAutoForward": "notify"
+        }
+    },
+
+    // Use 'postCreateCommand' to run commands after the container is created.
+     "postCreateCommand": "apt-get update && apt-get install -y build-essential default-mysql-client libpng-dev libjpeg62-turbo-dev libfreetype6-dev libzip-dev locales zip jpegoptim optipng pngquant gifsicle git unzip && cd /workspace && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && apt-get install -y libpq-dev && docker-php-ext-install pdo_pgsql && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash && export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && \\. \"$NVM_DIR/nvm.sh\" && [ -s \"$NVM_DIR/bash_completion\" ] && \\. \"$NVM_DIR/bash_completion\" && nvm install lts/hydrogen && npm install -g pnpm && npm install -g @nestjs/cli"
+
+    // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+    // "remoteUser": "root"
 }
