@@ -38,7 +38,7 @@
       "volumes": ["redis_data:/data"]
     }
   },
-  "forwardPorts": [3306, "db:3306", 8000, "redis:6379"],
+  "forwardPorts": [80,3306, 6379],
   "remoteExtensions": ["ms-vscode-remote.vscode-remote-extensionpack"],
   "volumes": ["mysql_data:/var/lib/mysql", "redis_data:/data"]
 }
