@@ -1,52 +1,44 @@
 {
-    "name": "test",
-    "service": "php",
-    "workspaceFolder": "/app",
-    "dockerComposeFile": [
-        "docker-compose.yml"
-    ],
-    "features": {
-        "ghcr.io/devcontainers/features/git:1": {},
-        "ghcr.io/devcontainers/features/node:1": {}
+  "name": "larapod",
+  "image": "php:8.1-fpm",
+  "extensions": [
+    "felixfbecker.php-debug",
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint"
+  ],
+  "settings": {
+    "php.validate.enable": true,
+    "php.suggest.basic": false,
+    "php.executablePath": "/usr/local/bin/php"
+  },
+  "mounts": [
+    "source=/<Route To Project>/larapod,target=/workspace,type=bind,consistency=delegated"
+  ],
+  "postCreateCommand": "apt-get update && apt-get install -y build-essential default-mysql-client libpng-dev libjpeg62-turbo-dev libfreetype6-dev libzip-dev locales zip jpegoptim optipng pngquant gifsicle git unzip && cd /workspace && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && apt-get install -y libpq-dev && docker-php-ext-install pdo_pgsql && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash && export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && \\. \"$NVM_DIR/nvm.sh\" && [ -s \"$NVM_DIR/bash_completion\" ] && \\. \"$NVM_DIR/bash_completion\" && nvm install lts/hydrogen && npm install -g pnpm && npm install -g @nestjs/cli",
+  "remoteEnv": {
+    "COMPOSER_ALLOW_SUPERUSER": "1"
+  },
+  "services": {
+    "db": {
+      "image": "mysql:latest",
+      "ports": ["3306:3306"],
+      "environment": {
+        "MYSQL_DATABASE": "laravel",
+        "MYSQL_USER": "laravel",
+        "MYSQL_PASSWORD": "password",
+        "MYSQL_ROOT_PASSWORD": "password"
+      },
+      "command": "mysqld --general-log=1 --general-log-file=/var/lib/mysql/general.log",
+      "volumes": ["mysql_data:/var/lib/mysql"]
     },
-    "postCreateCommand": ". /Users/mehranrasulian/Library/Application Support/Herd/config/nvm/nvm.sh && nvm install --lts",
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "ms-azuretools.vscode-docker",
-                "DEVSENSE.phptools-vscode",
-                "onecentlin.laravel-blade",
-                "shufo.vscode-blade-formatter",
-                "open-southeners.laravel-pint",
-                "amiralizadeh9480.laravel-extra-intellisense",
-                "codingyu.laravel-goto-view",
-                "absszero.vscode-laravel-goto",
-                "formulahendry.auto-rename-tag",
-                "vincaslt.highlight-matching-tag",
-                "bradlc.vscode-tailwindcss",
-                "ryannaddy.laravel-artisan",
-                "onecentlin.laravel5-snippets",
-                "onecentlin.laravel-extension-pack",
-                "cweijan.vscode-database-client2",
-                "cweijan.dbclient-jdbc",
-                "liamhammett.temphpest",
-                "dotenv.dotenv-vscode",
-                "vivaxy.vscode-conventional-commits",
-                "donjayamanne.githistory",
-                "jaguadoromero.vscode-php-create-class",
-                "Just4Devs.php-create-implementation",
-                "st-pham.php-refactor-tool",
-                "PlusTimeIT.php-file-refactoring",
-                "ctf0.php-namespace-resolver",
-                "phiter.phpstorm-snippets",
-                "IvanGrigorov.php-getters-and-setters",
-                "rexshi.phpdoc-comment-vscode-plugin",
-                "ErnstStavroBlofeld.php-types",
-                "mintlify.document",
-                "ctf0.vscode-laravel-gotos",
-                "SandaruwanGunathilake.laravel-eloquent-model-attributes"
-            ]
-        }
-    },
-    "remoteUser": "vscode"
+    "redis": {
+      "image": "redis:latest",
+      "ports": ["6379:6379"],
+      "volumes": ["redis_data:/data"]
+    }
+  },
+  "forwardPorts": [3306, "db:3306", 8000, "redis:6379"],
+  "remoteExtensions": ["ms-vscode-remote.vscode-remote-extensionpack"],
+  "volumes": ["mysql_data:/var/lib/mysql", "redis_data:/data"]
 }
